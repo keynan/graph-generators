@@ -1,6 +1,6 @@
 module Data.Graph.Generators.Clique(
   expectedEdgeCount
-  ,generateQClique
+  ,qCliqueGraph
   ) where
 
 import Data.Graph.Generators
@@ -50,6 +50,9 @@ exported largely for testing purposes.
 expectedEdgeCount :: Integral a => a -> a -> a
 expectedEdgeCount q t = ((q*(q-1)) `div` 2) + ((q+1)^t) - 1
 
+expectedNodeCount :: Integral a => a -> a -> a
+expectedNodeCount q t = (((q+1)^t)  -1) `div` q + q
+
 {-|
 
   Deterministically generate a recursive clique tree.
@@ -58,12 +61,12 @@ expectedEdgeCount q t = ((q*(q-1)) `div` 2) + ((q+1)^t) - 1
   
 -}
 
-generateQClique :: Int {-^ q, the size of each clique -}
-                -> Int {-^ t, the number of recursions / depth of the tree -}
-                -> GraphInfo
-generateQClique q t = GraphInfo {
+qCliqueGraph :: Int {-^ q, the size of each clique -}
+             -> Int {-^ t, the number of recursions / depth of the tree -}
+             -> GraphInfo
+qCliqueGraph q t = GraphInfo {
   edges = fst $ g t,
-  numNodes = (((q+1)^t)  -1) `div` q + q
+  numNodes = expectedNodeCount q t
   }
   where
     g :: Int -> ([(Int, Int)], (Int, C (C Int)))
